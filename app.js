@@ -1,7 +1,22 @@
 "use strict";
 
+var Path = require("path");
 var Cylon = require("cylon");
 var ws = require("nodejs-websocket");
+
+var windowed = true;
+
+process.argv.forEach(function (val, index, array) {
+  if (val === "--no-window") {
+    windowed = false;
+  }
+
+  if (val === "--help") {
+    console.log("Usage: node " + Path.basename(process.argv[1]) + " [--no-window] [--help]");
+    process.exit(1);
+  }
+});
+
 
 var EventedArray = function(handler) {
    this.stack = [];
@@ -127,12 +142,14 @@ Cylon.robot({
             color = [255,0,0];
           }
 
-          im.rectangle(
-            [face.x, face.y],
-            [face.width, face.height],
-            color,
-            2
-          );
+          if (windowed === true) {
+            im.rectangle(
+              [face.x, face.y],
+              [face.width, face.height],
+              color,
+              2
+            );
+          }
 
         }
 
@@ -149,7 +166,9 @@ Cylon.robot({
         // as an rgb array e.g. [r,g,b].
         // Once the image has been updated with rectangles around
         // the faces detected, we display it in our window.
-        my.window.show(im, 40);
+        if (windowed === true) {
+          my.window.show(im, 40);
+        }
 
         // After displaying the updated image we trigger another
         // frame read to ensure the fastest processing possible.
