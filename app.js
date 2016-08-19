@@ -4,6 +4,11 @@ var Path = require("path");
 var Cylon = require("cylon");
 var ws = require("nodejs-websocket");
 
+var http = require('http');
+var url = require('url');
+var path = require('path');
+var fs = require('fs');
+
 var windowed = true;
 
 process.argv.forEach(function (val, index, array) {
@@ -16,7 +21,6 @@ process.argv.forEach(function (val, index, array) {
     process.exit(1);
   }
 });
-
 
 var EventedArray = function(handler) {
    this.stack = [];
@@ -71,6 +75,41 @@ var server = ws.createServer(function (conn) {
       }
     })
 }).listen(8001)
+
+var allowedFiles = ['/view.html', '/fabulous.js', '/paper-full.js', '/poster.png'];
+var httpServer = http.createServer(function (request, response) {
+  // Get the filename from the request.
+  var pathToFile = url.parse(request.url).pathname;
+
+  if (pathToFile === '/' || pathToFile === '') {
+    pathToFile = '/view.html';
+  }
+
+  // Do not serve the other files.
+  if (allowedFiles.indexOf(pathToFile) == -1) {
+    response.writeHead(404, { 'Content-Type': 'text/plain'});
+    response.write('404 Not Found\n');
+    response.end();
+    return;
+  }
+
+  var filename = path.join(process.cwd(), pathToFile);
+
+  fs.readFile(filename, 'binary', function (err, file) {
+    if (err) {
+      response.writeHead(404, { 'Content-Type': 'text/plain'});
+      response.write('404 Not Found\n');
+      response.end();
+      return;
+    }
+
+    response.writeHead(200);
+    response.write(file, 'binary');
+    response.end();
+  });
+}).listen(8080, function () {
+  console.log('HTTP Server is running at http://localhost:%s', 8080);
+});
 
 Cylon.robot({
   connections: {
