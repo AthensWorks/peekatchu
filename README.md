@@ -2,7 +2,7 @@
 
 ## Install
 
-First install OpenCV. If you're on a Mac we recommend using (Homebrew)[http://brew.sh]:
+First install OpenCV. If you're on a Mac we recommend using [Homebrew](http://brew.sh):
 
 `brew install homebrew/science/opencv`
 
