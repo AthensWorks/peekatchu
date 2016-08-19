@@ -37,10 +37,12 @@ var server = ws.createServer(function (conn) {
     })
 
     messageReceivedQueue.setHandler(function(){
-      console.log("Something changed");
-      var popped = messageReceivedQueue.pop();
-      console.log(popped);
-      conn.sendText(JSON.stringify(popped));
+      var recentMessage = messageReceivedQueue.pop();
+      if (recentMessage)
+        var message = { "facesDected": recentMessage.length,
+                        "faceDetails": recentMessage
+                      }
+      conn.sendText(JSON.stringify(message));
     });
 
     conn.on("close", function (code, reason) {
@@ -84,24 +86,37 @@ Cylon.robot({
         // We loop through the faces and manipulate the image
         // to display a square in the coordinates for the detected
         // faces.
-        im.resize(im.width()*.5, im.height()*.5)
 
         if( this.faces === undefined ) {
+          // setup
           this.faces = faces;
         }
 
-        var multipleFrames = false;
+        var persistentFaces = [];
+        var matchedAnyFace = false;
+
+        // console.log("faces count: " + faces.length);
         for (var i = 0; i < faces.length; i++) {
           var face = faces[i];
-
-          messageReceivedQueue.push(face);
+          var matchedMultipleFrames = false;
 
           for (var c = 0; c < this.faces.length; c++) {
             var otherFace = this.faces[c];
 
-            if (Math.abs(otherFace.x - face.x) < 200 && Math.abs(otherFace.y - face.y) < 200) {
+            if (otherFace.matchCount === undefined) {
+              otherFace.matchCount = 0;
+            }
+
+            if (Math.abs(otherFace.x - face.x) < 100 && Math.abs(otherFace.y - face.y) < 100) {
               otherFace.matchCount++;
-              multipleFrames = true;
+              matchedAnyFace = true;
+
+              // console.log("face matchCount: " + otherFace.matchCount);
+              if (otherFace.matchCount > 2) {
+                matchedMultipleFrames = true;
+
+                persistentFaces.push(otherFace);
+              }
 
               break;
             }
@@ -109,19 +124,27 @@ Cylon.robot({
 
           var color = [0, 255, 0];
 
-          if (multipleFrames === true) {
-            color = [0,0,255];
-          } else {
-            this.faces = faces;
+          if (matchedMultipleFrames === true) {
+            color = [255,0,0];
           }
 
           im.rectangle(
-            [face.x*.5, face.y*.5],
-            [face.width*.5, face.height*.5],
+            [face.x, face.y],
+            [face.width, face.height],
             color,
             2
           );
+
         }
+
+        if (matchedAnyFace === false) {
+          // reset faces array
+
+          // console.log("reset");
+          this.faces = faces;
+        }
+
+        messageReceivedQueue.push(persistentFaces);
 
         // The second to last param is the color of the rectangle
         // as an rgb array e.g. [r,g,b].
