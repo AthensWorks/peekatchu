@@ -11,7 +11,7 @@ var fs = require('fs');
 
 var windowed = true;
 
-process.argv.forEach(function (val, index, array) {
+process.argv.forEach(function (val) {
   if (val === "--no-window") {
     windowed = false;
   }
@@ -157,7 +157,7 @@ Cylon.robot({
         // console.log("faces count: " + faces.length);
         var self = this;
 
-        faces.forEach( function(face, index, array) {
+        faces.forEach( function(face) {
           var matchedMultipleFrames = false;
 
           for (var i = 0; i < self.faces.length; i++) {
