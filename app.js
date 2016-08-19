@@ -1,6 +1,5 @@
 "use strict";
 
-// require ("math");
 var Cylon = require("cylon");
 var ws = require("nodejs-websocket");
 
