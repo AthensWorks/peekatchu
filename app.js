@@ -1,5 +1,7 @@
 "use strict";
 
+// require ("math");
+
 var Cylon = require("cylon");
 
 Cylon.robot({
@@ -15,6 +17,8 @@ Cylon.robot({
       haarcascade: __dirname + "/haarcascade_frontalface_alt.xml"
     }
   },
+
+  faces: undefined,
 
   work: function(my) {
     // We setup our face detection when the camera is ready to
@@ -34,15 +38,40 @@ Cylon.robot({
         // We loop through the faces and manipulate the image
         // to display a square in the coordinates for the detected
         // faces.
-
         im.resize(im.width()*.5, im.height()*.5)
+
+        if( this.faces === undefined ) {
+          this.faces = faces;
+        }
+
+        var multipleFrames = false;
 
         for (var i = 0; i < faces.length; i++) {
           var face = faces[i];
+
+          for (var c = 0; c < this.faces.length; c++) {
+            var otherFace = this.faces[c];
+
+            if (Math.abs(otherFace.x - face.x) < 200 && Math.abs(otherFace.y - face.y) < 200) {
+              otherFace.matchCount++;
+              multipleFrames = true;
+
+              break;
+            }
+          }
+
+          var color = [0, 255, 0];
+
+          if (multipleFrames === true) {
+            color = [0,0,255];
+          } else {
+            this.faces = faces;
+          }
+
           im.rectangle(
             [face.x*.5, face.y*.5],
             [face.width*.5, face.height*.5],
-            [0, 255, 0],
+            color,
             2
           );
         }
