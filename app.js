@@ -111,19 +111,24 @@ var httpServer = http.createServer(function (request, response) {
   console.log('HTTP Server is running at http://localhost:%s', 8080);
 });
 
+var deviceConfig = {
+  camera: {
+    driver: "camera",
+    camera: 0,
+    haarcascade: __dirname + "/haarcascade_frontalface_alt.xml"
+  }
+};
+
+if (windowed === true) {
+  deviceConfig['window'] =  { driver: "window" };
+}
+
 Cylon.robot({
   connections: {
     opencv: { adaptor: "opencv" }
   },
 
-  devices: {
-    window: { driver: "window" },
-    camera: {
-      driver: "camera",
-      camera: 0,
-      haarcascade: __dirname + "/haarcascade_frontalface_alt.xml"
-    }
-  },
+  devices: deviceConfig,
 
   faces: undefined,
 
