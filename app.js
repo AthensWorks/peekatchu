@@ -34,11 +34,14 @@ Cylon.robot({
         // We loop through the faces and manipulate the image
         // to display a square in the coordinates for the detected
         // faces.
+
+        im.resize(im.width()*.5, im.height()*.5)
+
         for (var i = 0; i < faces.length; i++) {
           var face = faces[i];
           im.rectangle(
-            [face.x, face.y],
-            [face.x + face.width, face.y + face.height],
+            [face.x*.5, face.y*.5],
+            [face.width*.5, face.height*.5],
             [0, 255, 0],
             2
           );
