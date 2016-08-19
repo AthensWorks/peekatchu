@@ -39,31 +39,37 @@ var EventedArray = function(handler) {
    this.getArray = function() {
       return this.stack;
    }
+   this.clearArray = function() {
+     return this.stack = [];
+   }
 }
 
 var messageReceivedQueue = new EventedArray();
 
+var clearMessageReceivedQueue = function() {
+  messageReceivedQueue.clearArray();
+}
 var server = ws.createServer(function (conn) {
-    console.log("New connection");
-
-    conn.on("text", function (str) {
-      console.log("Received " + str);
-    })
+    if (server.connections.length == 1) {
+      clearMessageReceivedQueue();
+    }
 
     messageReceivedQueue.setHandler(function(){
       var recentMessage = messageReceivedQueue.pop();
       if (recentMessage)
         var message = { "facesDected": recentMessage.length,
                         "faceDetails": recentMessage
-                      }
-      conn.sendText(JSON.stringify(message));
+                      };
+      server.connections.forEach(function (conn) {
+        conn.sendText(JSON.stringify(message));
+      })
     });
 
     conn.on("close", function (code, reason) {
-      console.log("Connection closed")
+      if (server.connections.length == 0) {
+        clearMessageReceivedQueue();
+      }
     })
-
-    conn.sendText("test");
 }).listen(8001)
 
 Cylon.robot({
