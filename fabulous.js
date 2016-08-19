@@ -9,6 +9,19 @@ var particleDuration = 0.5;
 var lastEmissionTime = 0;
 var faceRectangles = [];
 
+ws = new WebSocket("ws://localhost:8001");
+ws.onmessage = function (msg) {
+  console.log(msg.data);
+  var obj = JSON.parse(msg.data);
+  faceRectangles = [];
+
+  for(var i = 0; i < obj.faceDetails.length; i++) {
+    var face = obj.faceDetails[i];
+
+    faceRectangles.push(new Rectangle(face.x, face.y, face.width, face.height));
+  }
+};
+
 function onFrame(event) {
 	if (event.time - lastEmissionTime > emissionFrequency) {
 		for (var i = 0; i < faceRectangles.length; i++) {
