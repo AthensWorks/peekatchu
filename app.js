@@ -1,8 +1,54 @@
 "use strict";
 
 // require ("math");
-
 var Cylon = require("cylon");
+var ws = require("nodejs-websocket");
+
+var EventedArray = function(handler) {
+   this.stack = [];
+   this.mutationHandler = handler || function() {};
+   this.setHandler = function(f) {
+      this.mutationHandler = f;
+   };
+   this.callHandler = function() {
+      if(typeof this.mutationHandler === 'function') {
+         this.mutationHandler();
+      }
+   };
+   this.push = function(obj) {
+      this.stack.push(obj);
+      this.callHandler();
+   };
+   this.pop = function() {
+      return this.stack.pop();
+   };
+   this.getArray = function() {
+      return this.stack;
+   }
+}
+
+var messageReceivedQueue = new EventedArray();
+
+var server = ws.createServer(function (conn) {
+    console.log("New connection");
+
+    conn.on("text", function (str) {
+      console.log("Received " + str);
+    })
+
+    messageReceivedQueue.setHandler(function(){
+      console.log("Something changed");
+      var popped = messageReceivedQueue.pop();
+      console.log(popped);
+      conn.sendText(JSON.stringify(popped));
+    });
+
+    conn.on("close", function (code, reason) {
+      console.log("Connection closed")
+    })
+
+    conn.sendText("test");
+}).listen(8001)
 
 Cylon.robot({
   connections: {
@@ -45,9 +91,10 @@ Cylon.robot({
         }
 
         var multipleFrames = false;
-
         for (var i = 0; i < faces.length; i++) {
           var face = faces[i];
+
+          messageReceivedQueue.push(face);
 
           for (var c = 0; c < this.faces.length; c++) {
             var otherFace = this.faces[c];
