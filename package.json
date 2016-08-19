@@ -1,0 +1,52 @@
+{
+  "name": "peekatchu",
+  "version": "0.0.1",
+  "description": "Digital signage that recognizes faces.",
+  "main": "app.js",
+  "dependencies": {
+    "cylon-opencv": "^0.15.0",
+    "cylon": "^1.3.0",
+    "opencv": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AthensWorks/peekatchu.git"
+  },
+  "keywords": [
+    "signage",
+    "face",
+    "recognition"
+  ],
+  "author": "Athensworks Hack Night",
+  "contributors": [
+    {
+      "name": "Ricky Chilcott",
+      "email": "ricky@rakefire.io"
+    },
+    {
+      "name": "John Buswell",
+      "email": "buswellj@gmail.com"
+    },
+    {
+      "name": "Krerkkiat Chusap",
+      "email": "chusap.krerkkait@gmail.com"
+    },
+    {
+      "name": "Michael Blohm",
+      "email": "mike.blohm@gmail.com"
+    },
+    {
+      "name": "Ben Lachman",
+      "email": "blachman@gmail.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/AthensWorks/peekatchu/issues"
+  },
+  "homepage": "https://github.com/AthensWorks/peekatchu#readme"
+}
