@@ -24,7 +24,7 @@ To run without the window that shows video feedback:
 
 Cylon doesn't allow for manipulation of camera resolution or frame rate. You can use `ffmpeg` to manipulate the camera options *after* launch.
 
-### To Install ffmpeg on a Mac using
+####To Install ffmpeg on a Mac using Homebrew
 
 `brew install ffmpeg`
 
