@@ -110,12 +110,13 @@ Cylon.robot({
         var matchedAnyFace = false;
 
         // console.log("faces count: " + faces.length);
-        for (var i = 0; i < faces.length; i++) {
-          var face = faces[i];
+        var self = this;
+
+        faces.forEach( function(face, index, array) {
           var matchedMultipleFrames = false;
 
-          for (var c = 0; c < this.faces.length; c++) {
-            var otherFace = this.faces[c];
+          for (var i = 0; i < self.faces.length; i++) {
+            var otherFace = self.faces[i];
 
             if (otherFace.matchCount === undefined) {
               otherFace.matchCount = 0;
@@ -135,7 +136,6 @@ Cylon.robot({
               break;
             }
           }
-
           var color = [0, 255, 0];
 
           if (matchedMultipleFrames === true) {
@@ -151,7 +151,7 @@ Cylon.robot({
             );
           }
 
-        }
+        }); // forEach
 
         if (matchedAnyFace === false) {
           // reset faces array
