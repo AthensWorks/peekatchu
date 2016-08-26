@@ -6,8 +6,11 @@
   "dependencies": {
     "cylon": "^1.3.0",
     "cylon-opencv": "^0.15.0",
+    "hapi": "^14.2.0",
+    "inert": "^4.0.2",
     "nodejs-websocket": "^1.6.0",
-    "opencv": "^5.0.0"
+    "opencv": "^5.0.0",
+    "yargs": "^5.0.0"
   },
   "devDependencies": {},
   "scripts": {
