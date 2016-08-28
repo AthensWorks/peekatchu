@@ -1,8 +1,14 @@
 module FacesApp exposing (..)
 
-import Html exposing (..)
+import Html exposing
+  ( Html
+  , div
+  , li
+  , pre
+  , text
+  , ul
+  )
 import Html.App as Html
-import Html.Events exposing (..)
 import Json.Decode exposing
   ( Decoder
   , (:=)
@@ -43,7 +49,7 @@ decodeFrame =
 
 init : ( Model, Cmd Msg )
 init =
-  ( Model [] "Waiting for server...", Cmd.none )
+  ( Model [] "", Cmd.none )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -62,8 +68,16 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   div []
-    [ pre [] [ text (toString (List.length model.faces)) ]
-    , pre [] [ text model.error ]]
+    [ ul [] (List.map viewFace model.faces)
+    , pre [] [ text model.error ]
+    ]
+
+viewFace : Face -> Html Msg
+viewFace face =
+  li []
+    [ pre [] [ text (toString face) ]
+    ]
+
 
 main =
   Html.program
