@@ -57,6 +57,10 @@ module.exports = (windowed, queue) => Cylon.robot({
 
             if (Math.abs(otherFace.x - face.x) < 100 && Math.abs(otherFace.y - face.y) < 100) {
               otherFace.matchCount++
+              otherFace.x = face.x
+              otherFace.y = face.y
+              otherFace.height = face.height
+              otherFace.width = face.width
               matchedAnyFace = true
 
               // console.log('face matchCount: ' + otherFace.matchCount)
@@ -69,13 +73,11 @@ module.exports = (windowed, queue) => Cylon.robot({
               break
             }
           }
-          let color = [0, 255, 0]
-
-          if (matchedMultipleFrames === true) {
-            color = [255,0,0]
-          }
-
           if (windowed === true) {
+            const color =
+              matchedMultipleFrames
+              ? [ 255, 0, 0 ]
+              : [0, 255, 0]
             im.rectangle(
               [face.x, face.y],
               [face.width, face.height],
