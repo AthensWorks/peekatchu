@@ -2,7 +2,9 @@
 
 const ws = require('nodejs-websocket')
 const Hapi = require('hapi')
-const Inert = require('inert')
+const inert = require('inert')
+const Webpack = require('webpack')
+const WebpackPlugin = require('hapi-webpack-plugin')
 
 const path = require('path')
 const fs = require('fs')
@@ -15,16 +17,16 @@ const argv =
     .default('window', true)
     .argv
 
-const EventedArray = require('./src/evented-array')
-const robot = require('./src/robot')
+const EventedArray = require('./server/evented-array')
+const robot = require('./server/robot')
 
 const messageReceivedQueue = new EventedArray()
 
-const clearMessageReceivedQueue = () => {
-  messageReceivedQueue.clearArray()
-}
-
 const wsServer = ws.createServer(conn => {
+  const clearMessageReceivedQueue = () => {
+    messageReceivedQueue.clearArray()
+  }
+
   if (wsServer.connections.length === 1) {
     clearMessageReceivedQueue()
   }
@@ -37,7 +39,7 @@ const wsServer = ws.createServer(conn => {
         faceDetails: recentMessage
       }
       wsServer.connections.forEach((conn) => {
-        conn.sendText(JSON.stringify(message))
+        conn.sendText(JSON.stringify(message, null, 2))
       })
     }
   })
@@ -64,7 +66,28 @@ const httpServer = new Hapi.Server({
 
 httpServer.connection({ port: '8080' })
 
-httpServer.register(Inert, new Function)
+httpServer.register(inert, new Function)
+httpServer.register({
+  register: WebpackPlugin,
+  options: {
+    compiler: new Webpack({
+      entry: path.join(__dirname, 'client/index.js'),
+      output: {
+        path: '/'
+      },
+      loaders: [
+        {
+          test: /\.js$/,
+          include: [ path.join(__dirname, 'client') ],
+          loader: 'babel'
+        }
+      ]
+    }),
+    assets: {
+      publicPath: '/assets/'
+    }
+  }
+})
 
 httpServer.route({
   method: 'GET',
