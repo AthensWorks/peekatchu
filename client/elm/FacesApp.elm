@@ -47,7 +47,7 @@ decodeFace =
 
 decodeFrame : Decoder (List Face)
 decodeFrame =
-  ( "faces" := (list decodeFace) )
+  ( "faces" := list decodeFace )
 
 init : ( Model, Cmd Msg )
 init =
@@ -71,13 +71,14 @@ view : Model -> Html Msg
 view model =
   div []
     [ pre [] [ text model.error ] 
-    , ul [] (List.map viewFace model.faces)
+    , ul []
+        <| List.map viewFace model.faces
     ]
 
 viewFace : Face -> Html Msg
 viewFace face =
   li []
-    [ pre [] [ text (toString face) ]
+    [ pre [] [ text <| toString face ]
     ]
 
 main : Program Never
