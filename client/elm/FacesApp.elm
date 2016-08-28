@@ -1,4 +1,4 @@
-module Elm exposing (..)
+module FacesApp exposing (..)
 
 import Html exposing (..)
 import Html.App as Html
@@ -7,10 +7,10 @@ import Html.Events exposing (..)
 import WebSocket
 
 type alias Model =
-  { faces : String }
+  { frame : String }
 
 type Msg
-  = NewFaceCount String
+  = SocketFrame String
 
 init : ( Model, Cmd Msg )
 init =
@@ -19,17 +19,17 @@ init =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    NewFaceCount faces ->
-      ( Model faces, Cmd.none )
+    SocketFrame frame ->
+      ( Model frame, Cmd.none )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  WebSocket.listen "ws://localhost:8001" NewFaceCount
+  WebSocket.listen "ws://localhost:8001" SocketFrame
 
 view : Model -> Html Msg
 view model =
   div []
-    [ pre [] [ text model.faces ] ]
+    [ pre [] [ text model.frame ] ]
 
 main =
   Html.program
@@ -38,5 +38,3 @@ main =
     , update = update
     , subscriptions = subscriptions
     }
-
-

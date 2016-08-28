@@ -27,6 +27,8 @@ const wsServer = ws.createServer(conn => {
     messageReceivedQueue.clearArray()
   }
 
+  let lastMessage = JSON.stringify(null)
+
   if (wsServer.connections.length === 1) {
     clearMessageReceivedQueue()
   }
@@ -34,13 +36,16 @@ const wsServer = ws.createServer(conn => {
   messageReceivedQueue.setHandler(() => {
     const recentMessage = messageReceivedQueue.pop()
     if (recentMessage) {
-      const message = {
-        facesDected: recentMessage.length,
-        faceDetails: recentMessage
-      }
-      wsServer.connections.forEach((conn) => {
-        conn.sendText(JSON.stringify(message, null, 2))
+      const message = JSON.stringify({
+        faces: recentMessage
       })
+
+      if (message !== lastMessage) {
+        lastMessage = message
+        wsServer.connections.forEach((conn) => {
+          conn.sendText(message)
+        })
+      }
     }
   })
 

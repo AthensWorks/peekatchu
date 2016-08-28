@@ -1,4 +1,3 @@
-const { Elm } = require('elm-webpack!./elm/Main.elm')
+const { FacesApp } = require('elm-webpack!./elm/FacesApp.elm')
 
-
-Elm.embed(document.getElementById('elm-root'))
+FacesApp.embed(document.getElementById('elm-root'))
