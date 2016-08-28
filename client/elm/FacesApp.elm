@@ -36,6 +36,7 @@ type alias Model =
 type Msg
   = SocketFrame String
 
+decodeFace : Decoder Face
 decodeFace =
   object5 Face
     ( "x"          := int )
@@ -44,6 +45,7 @@ decodeFace =
     ( "width"      := int )
     ( "matchCount" := int )
 
+decodeFrame : Decoder (List Face)
 decodeFrame =
   ( "faces" := (list decodeFace) )
 
@@ -68,8 +70,8 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   div []
-    [ ul [] (List.map viewFace model.faces)
-    , pre [] [ text model.error ]
+    [ pre [] [ text model.error ] 
+    , ul [] (List.map viewFace model.faces)
     ]
 
 viewFace : Face -> Html Msg
@@ -78,7 +80,7 @@ viewFace face =
     [ pre [] [ text (toString face) ]
     ]
 
-
+main : Program Never
 main =
   Html.program
     { init          = init
